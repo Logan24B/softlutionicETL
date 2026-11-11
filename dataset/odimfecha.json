@@ -1,0 +1,63 @@
+{
+	"name": "odimfecha",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FechaKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Fecha",
+				"type": "date"
+			},
+			{
+				"name": "Dia",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "DiaSemana",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "NombreDia",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Mes",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "NombreMes",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Trimestre",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "Anio",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "EsFinSemana",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimFecha"
+		}
+	}
+}

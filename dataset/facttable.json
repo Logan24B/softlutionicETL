@@ -1,0 +1,99 @@
+{
+	"name": "facttable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FactFacturacionKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FechaEmisionKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FechaVencimientoKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ClienteKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ServicioKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TipoContratoKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EstadoFacturaKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "UsuarioKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ContratoKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FacturaIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "DetalleFacturaIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CodigoFact",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Cantidad",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PrecioVenta",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "ImporteLinea",
+				"type": "decimal",
+				"precision": 37,
+				"scale": 4
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FactFacturacion"
+		}
+	}
+}
