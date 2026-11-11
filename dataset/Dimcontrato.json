@@ -1,0 +1,58 @@
+{
+	"name": "Dimcontrato",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ContratoKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ContratoIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ClienteIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TipoContratoIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FechaInicio",
+				"type": "date"
+			},
+			{
+				"name": "FechaFin",
+				"type": "date"
+			},
+			{
+				"name": "EstadoContrato",
+				"type": "bit"
+			},
+			{
+				"name": "Descripcion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimContrato"
+		}
+	}
+}

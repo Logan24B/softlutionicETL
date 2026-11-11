@@ -1,0 +1,12 @@
+{
+	"name": "Origendatos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "origenOLTP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

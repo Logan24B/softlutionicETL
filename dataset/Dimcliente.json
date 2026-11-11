@@ -1,0 +1,77 @@
+{
+	"name": "Dimcliente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ClienteKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ClienteIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Nombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Apellido",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NombreCompleto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cedula",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Correo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Direccion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Departamento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EstadoCliente",
+				"type": "bit"
+			},
+			{
+				"name": "FechaRegistro",
+				"type": "date"
+			},
+			{
+				"name": "HoraRegistro",
+				"type": "time",
+				"scale": 7
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimCliente"
+		}
+	}
+}

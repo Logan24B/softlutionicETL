@@ -1,0 +1,50 @@
+{
+	"name": "Dimservicio",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ServicioKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ServicioIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NombreServicio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Descripcion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PrecioLista",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Duracion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimServicio"
+		}
+	}
+}

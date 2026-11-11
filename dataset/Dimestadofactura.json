@@ -1,0 +1,36 @@
+{
+	"name": "Dimestadofactura",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EstadoFacturaKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EstadoFacturaIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimEstadoFactura"
+		}
+	}
+}

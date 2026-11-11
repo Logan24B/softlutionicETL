@@ -1,0 +1,73 @@
+{
+	"name": "Dimusuario",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "destinoDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "UsuarioKey",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "UsuarioIdSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Username",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PrimerNombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SegundoNombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NombreCompleto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Rol",
+				"type": "bit"
+			},
+			{
+				"name": "IsSuperuser",
+				"type": "bit"
+			},
+			{
+				"name": "IsStaff",
+				"type": "bit"
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			},
+			{
+				"name": "FechaRegistro",
+				"type": "date"
+			},
+			{
+				"name": "HoraRegistro",
+				"type": "time",
+				"scale": 7
+			},
+			{
+				"name": "FechaCarga",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimUsuario"
+		}
+	}
+}
