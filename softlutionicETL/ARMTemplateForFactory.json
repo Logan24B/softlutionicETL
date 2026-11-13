@@ -1,0 +1,1938 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "softlutionicETL"
+		},
+		"destinoDW_password": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"password\"de \"destinoDW\""
+		},
+		"origenOLTP_password": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"password\"de \"origenOLTP\""
+		},
+		"destinoDW_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sql-softlutionic2.database.windows.net"
+		},
+		"destinoDW_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Softlutionic_DW"
+		},
+		"destinoDW_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsoftlutionic"
+		},
+		"origenOLTP_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sql-softlutionic2.database.windows.net"
+		},
+		"origenOLTP_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "softlutionic-sistema-db"
+		},
+		"origenOLTP_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsoftlutionic"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimesiones')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "01Dimcliente",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    c.id AS ClienteIdSource,\n    c.Nombre,\n    c.Apellido,\n    CONCAT(c.Nombre, ' ', c.Apellido) AS NombreCompleto,\n    c.Cedula,\n    c.Telefono,\n    c.Correo,\n    c.Direccion,\n    d.Nombre AS Departamento,\n    c.Estado AS EstadoCliente,\n    c.FechaRegistro,\n    c.HoraRegistro\nFROM dbo.Clientes c\nINNER JOIN dbo.departamentos d\n    ON c.DepartamentoId = d.id;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"ClienteIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ClienteIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										},
+										"sink": {
+											"name": "ClienteIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										}
+									},
+									{
+										"source": {
+											"name": "Nombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Nombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Apellido",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Apellido",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "NombreCompleto",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "NombreCompleto",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Cedula",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Cedula",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Telefono",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Telefono",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Correo",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Correo",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Direccion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Direccion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Departamento",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Departamento",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EstadoCliente",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "EstadoCliente",
+											"type": "Boolean",
+											"physicalType": "bit"
+										}
+									},
+									{
+										"source": {
+											"name": "FechaRegistro",
+											"type": "Date",
+											"physicalType": "date"
+										},
+										"sink": {
+											"name": "FechaRegistro",
+											"type": "Date",
+											"physicalType": "date"
+										}
+									},
+									{
+										"source": {
+											"name": "HoraRegistro",
+											"type": "TimeSpan",
+											"physicalType": "time"
+										},
+										"sink": {
+											"name": "HoraRegistro",
+											"type": "TimeSpan",
+											"physicalType": "time"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimcliente",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "02Dimservicio",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    s.id AS ServicioIdSource,\n    s.Nombre_Servicio AS NombreServicio,\n    s.Descripcion,\n    CAST(s.Precio AS DECIMAL(18,2)) AS PrecioLista,\n    CONVERT(NVARCHAR(50), s.Duracion) AS Duracion\nFROM dbo.Servicios s;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"ServicioIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ServicioIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										},
+										"sink": {
+											"name": "ServicioIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										}
+									},
+									{
+										"source": {
+											"name": "NombreServicio",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "NombreServicio",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Descripcion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Descripcion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "PrecioLista",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 2,
+											"precision": 18
+										},
+										"sink": {
+											"name": "PrecioLista",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 2,
+											"precision": 18
+										}
+									},
+									{
+										"source": {
+											"name": "Duracion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Duracion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimservicio",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "03Dimtipocontrato",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    tc.id AS TipoContratoIdSource,\n    tc.Nombre,\n    tc.Descripcion\nFROM dbo.TipoContrato tc;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"TipoContratoIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TipoContratoIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										},
+										"sink": {
+											"name": "TipoContratoIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										}
+									},
+									{
+										"source": {
+											"name": "Nombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Nombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Descripcion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Descripcion",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimtipocontrato",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "04Dimestadofactura",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    ef.id AS EstadoFacturaIdSource,\n    ef.estado AS Estado\nFROM dbo.estado_factura ef;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"EstadoFacturaIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EstadoFacturaIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										},
+										"sink": {
+											"name": "EstadoFacturaIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										}
+									},
+									{
+										"source": {
+											"name": "Estado",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Estado",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimestadofactura",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "05Dimusuario",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    u.id AS UsuarioIdSource,\n    u.username AS Username,\n    u.PrimerNombre,\n    u.SegundoNombre,\n    LTRIM(RTRIM(\n        CONCAT(\n            ISNULL(u.PrimerNombre, ''),\n            ' ',\n            ISNULL(u.SegundoNombre, '')\n        )\n    )) AS NombreCompleto,\n    u.Rol,\n    u.is_superuser AS IsSuperuser,\n    u.is_staff AS IsStaff,\n    u.is_active AS IsActive,\n    u.FechaRegistro,\n    u.HoraRegistro\nFROM dbo.Usuarios u;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"UsuarioIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "UsuarioIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										},
+										"sink": {
+											"name": "UsuarioIdSource",
+											"type": "Int64",
+											"physicalType": "bigint"
+										}
+									},
+									{
+										"source": {
+											"name": "Username",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Username",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "PrimerNombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "PrimerNombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SegundoNombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "SegundoNombre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "NombreCompleto",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "NombreCompleto",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Rol",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "Rol",
+											"type": "Boolean",
+											"physicalType": "bit"
+										}
+									},
+									{
+										"source": {
+											"name": "IsSuperuser",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsSuperuser",
+											"type": "Boolean",
+											"physicalType": "bit"
+										}
+									},
+									{
+										"source": {
+											"name": "IsStaff",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsStaff",
+											"type": "Boolean",
+											"physicalType": "bit"
+										}
+									},
+									{
+										"source": {
+											"name": "IsActive",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsActive",
+											"type": "Boolean",
+											"physicalType": "bit"
+										}
+									},
+									{
+										"source": {
+											"name": "FechaRegistro",
+											"type": "Date",
+											"physicalType": "date"
+										},
+										"sink": {
+											"name": "FechaRegistro",
+											"type": "Date",
+											"physicalType": "date"
+										}
+									},
+									{
+										"source": {
+											"name": "HoraRegistro",
+											"type": "TimeSpan",
+											"physicalType": "time"
+										},
+										"sink": {
+											"name": "HoraRegistro",
+											"type": "TimeSpan",
+											"physicalType": "time"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimusuario",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "06Dimcontrato",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT\n    c.id AS ContratoIdSource,\n    c.ClienteId AS ClienteIdSource,\n    c.TipoContratoId AS TipoContratoIdSource,\n    c.Fecha_Inc AS FechaInicio,\n    c.Fecha_Fin AS FechaFin,\n    c.EstadoContrato,\n    c.Descripcion\nFROM dbo.Contratos c;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"ContratoIdSource"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Origendatos",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Dimcontrato",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Origendatos')]",
+				"[concat(variables('factoryId'), '/datasets/Dimcliente')]",
+				"[concat(variables('factoryId'), '/datasets/Dimservicio')]",
+				"[concat(variables('factoryId'), '/datasets/Dimtipocontrato')]",
+				"[concat(variables('factoryId'), '/datasets/Dimestadofactura')]",
+				"[concat(variables('factoryId'), '/datasets/Dimusuario')]",
+				"[concat(variables('factoryId'), '/datasets/Dimcontrato')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/flujo de datos')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Cargar_FactFacturacion",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"Odimcliente": {},
+									"Odimservicio": {},
+									"Odimtipocontrato": {},
+									"Odimestadofactura": {},
+									"Odimusuario": {},
+									"Odimcontrato": {},
+									"Odimfecha": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Cargar_FactFacturacion')]",
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimcliente')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ClienteKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ClienteIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Nombre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Apellido",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreCompleto",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cedula",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Telefono",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Correo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Direccion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Departamento",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EstadoCliente",
+						"type": "bit"
+					},
+					{
+						"name": "FechaRegistro",
+						"type": "date"
+					},
+					{
+						"name": "HoraRegistro",
+						"type": "time",
+						"scale": 7
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimCliente"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimcontrato')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ContratoKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ContratoIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ClienteIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TipoContratoIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "FechaInicio",
+						"type": "date"
+					},
+					{
+						"name": "FechaFin",
+						"type": "date"
+					},
+					{
+						"name": "EstadoContrato",
+						"type": "bit"
+					},
+					{
+						"name": "Descripcion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimContrato"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimestadofactura')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EstadoFacturaKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "EstadoFacturaIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimEstadoFactura"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimservicio')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ServicioKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ServicioIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "NombreServicio",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Descripcion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PrecioLista",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Duracion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimServicio"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimtipocontrato')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TipoContratoKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TipoContratoIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Nombre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Descripcion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimTipoContrato"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dimusuario')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "UsuarioKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "UsuarioIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Username",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PrimerNombre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SegundoNombre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreCompleto",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Rol",
+						"type": "bit"
+					},
+					{
+						"name": "IsSuperuser",
+						"type": "bit"
+					},
+					{
+						"name": "IsStaff",
+						"type": "bit"
+					},
+					{
+						"name": "IsActive",
+						"type": "bit"
+					},
+					{
+						"name": "FechaRegistro",
+						"type": "date"
+					},
+					{
+						"name": "HoraRegistro",
+						"type": "time",
+						"scale": 7
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimUsuario"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Origendatos')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "origenOLTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/origenOLTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/facttable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FactFacturacionKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "FechaEmisionKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FechaVencimientoKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ClienteKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ServicioKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TipoContratoKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "EstadoFacturaKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "UsuarioKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ContratoKey",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "FacturaIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "DetalleFacturaIdSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CodigoFact",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Cantidad",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PrecioVenta",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "ImporteLinea",
+						"type": "decimal",
+						"precision": 37,
+						"scale": 4
+					},
+					{
+						"name": "FechaCarga",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FactFacturacion"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/odimfecha')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "destinoDW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FechaKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Fecha",
+						"type": "date"
+					},
+					{
+						"name": "Dia",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "DiaSemana",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "NombreDia",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Mes",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "NombreMes",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Trimestre",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Anio",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "EsFinSemana",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimFecha"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/destinoDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/destinoDW')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('destinoDW_properties_typeProperties_server')]",
+					"database": "[parameters('destinoDW_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('destinoDW_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('destinoDW_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/origenOLTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('origenOLTP_properties_typeProperties_server')]",
+					"database": "[parameters('origenOLTP_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('origenOLTP_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('origenOLTP_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Cargar_FactFacturacion')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Origendatos",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimcliente",
+								"type": "DatasetReference"
+							},
+							"name": "Odimcliente"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimservicio",
+								"type": "DatasetReference"
+							},
+							"name": "Odimservicio"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimtipocontrato",
+								"type": "DatasetReference"
+							},
+							"name": "Odimtipocontrato"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimestadofactura",
+								"type": "DatasetReference"
+							},
+							"name": "Odimestadofactura"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimusuario",
+								"type": "DatasetReference"
+							},
+							"name": "Odimusuario"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dimcontrato",
+								"type": "DatasetReference"
+							},
+							"name": "Odimcontrato"
+						},
+						{
+							"dataset": {
+								"referenceName": "odimfecha",
+								"type": "DatasetReference"
+							},
+							"name": "Odimfecha"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "facttable",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "lookupdimcliente"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "lookupdimservicio"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "lookupdimtipocontrato"
+						},
+						{
+							"name": "select3"
+						},
+						{
+							"name": "lookupdimestadofcatura"
+						},
+						{
+							"name": "select4"
+						},
+						{
+							"name": "lookupdimusuario"
+						},
+						{
+							"name": "select5"
+						},
+						{
+							"name": "lookupdimcontrato"
+						},
+						{
+							"name": "select6"
+						},
+						{
+							"name": "lookupdimfecha"
+						},
+						{
+							"name": "select7"
+						},
+						{
+							"name": "lookupdimfechav"
+						},
+						{
+							"name": "select8"
+						},
+						{
+							"name": "alterRowfactfacturacion"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          FacturaIdSource as long,",
+						"          DetalleFacturaIdSource as long,",
+						"          FechaEmisionKey as integer,",
+						"          FechaVencimientoKey as integer,",
+						"          ClienteIdSource as long,",
+						"          ServicioIdSource as long,",
+						"          TipoContratoIdSource as long,",
+						"          EstadoFacturaIdSource as long,",
+						"          UsuarioIdSource as long,",
+						"          ContratoIdSource as long,",
+						"          CodigoFact as integer,",
+						"          Cantidad as integer,",
+						"          PrecioVenta as decimal(18,2)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    f.id AS FacturaIdSource,\\n    df.id AS DetalleFacturaIdSource,\\n\\n    CONVERT(INT, CONVERT(CHAR(8), f.Fecha_Emision, 112))\\n        AS FechaEmisionKey,\\n\\n    CONVERT(INT, CONVERT(CHAR(8), f.Fecha_Vencimiento, 112))\\n        AS FechaVencimientoKey,\\n\\n    c.ClienteId AS ClienteIdSource,\\n    df.ServicioId AS ServicioIdSource,\\n    c.TipoContratoId AS TipoContratoIdSource,\\n    f.EstadoId AS EstadoFacturaIdSource,\\n    f.UsuarioId AS UsuarioIdSource,\\n    f.ContratoId AS ContratoIdSource,\\n\\n    f.CodigoFact,\\n    df.Cantidad,\\n    CAST(df.PrecioVenta AS DECIMAL(18,2)) AS PrecioVenta\\n\\nFROM dbo.Detalle_Factura df\\nINNER JOIN dbo.Facturas f\\n    ON df.FacturaId = f.id\\n\\nINNER JOIN dbo.Contratos c\\n    ON f.ContratoId = c.id',",
+						"     format: 'query') ~> source1",
+						"source(output(",
+						"          ClienteKey as long,",
+						"          ClienteIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: '\\nSELECT\\n    ClienteKey,\\n    ClienteIdSource\\nFROM dbo.DimCliente\\n',",
+						"     format: 'query') ~> Odimcliente",
+						"source(output(",
+						"          ServicioKey as long,",
+						"          ServicioIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: '\\nSELECT\\n    ServicioKey,\\n    ServicioIdSource\\nFROM dbo.DimServicio\\n',",
+						"     format: 'query') ~> Odimservicio",
+						"source(output(",
+						"          TipoContratoKey as long,",
+						"          TipoContratoIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    TipoContratoKey,\\n    TipoContratoIdSource\\nFROM dbo.DimTipoContrato',",
+						"     format: 'query') ~> Odimtipocontrato",
+						"source(output(",
+						"          EstadoFacturaKey as long,",
+						"          EstadoFacturaIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    EstadoFacturaKey,\\n    EstadoFacturaIdSource\\nFROM dbo.DimEstadoFactura',",
+						"     format: 'query') ~> Odimestadofactura",
+						"source(output(",
+						"          UsuarioKey as long,",
+						"          UsuarioIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    UsuarioKey,\\n    UsuarioIdSource\\nFROM dbo.DimUsuario',",
+						"     format: 'query') ~> Odimusuario",
+						"source(output(",
+						"          ContratoKey as long,",
+						"          ContratoIdSource as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: '\\nSELECT\\n    ContratoKey,\\n    ContratoIdSource\\nFROM dbo.DimContrato\\n',",
+						"     format: 'query') ~> Odimcontrato",
+						"source(output(",
+						"          FechaKey as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: '\\nSELECT FechaKey\\nFROM dbo.DimFecha\\n',",
+						"     format: 'query') ~> Odimfecha",
+						"source1, Odimcliente lookup(source1@ClienteIdSource == Odimcliente@ClienteIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimcliente",
+						"lookupdimcliente select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          ServicioIdSource,",
+						"          TipoContratoIdSource,",
+						"          EstadoFacturaIdSource,",
+						"          ContratoIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          UsuarioIdSource",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1, Odimservicio lookup(select1@ServicioIdSource == Odimservicio@ServicioIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimservicio",
+						"lookupdimservicio select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          TipoContratoIdSource,",
+						"          EstadoFacturaIdSource,",
+						"          ContratoIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          UsuarioIdSource,",
+						"          ServicioKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select2, Odimtipocontrato lookup(select2@TipoContratoIdSource == Odimtipocontrato@TipoContratoIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimtipocontrato",
+						"lookupdimtipocontrato select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          EstadoFacturaIdSource,",
+						"          ContratoIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          UsuarioIdSource,",
+						"          ServicioKey,",
+						"          TipoContratoKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select3",
+						"select3, Odimestadofactura lookup(select3@EstadoFacturaIdSource == Odimestadofactura@EstadoFacturaIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimestadofcatura",
+						"lookupdimestadofcatura select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          ContratoIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          UsuarioIdSource,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select4",
+						"select4, Odimusuario lookup(select4@UsuarioIdSource == Odimusuario@UsuarioIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimusuario",
+						"lookupdimusuario select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          ContratoIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey,",
+						"          UsuarioKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select5",
+						"select5, Odimcontrato lookup(select5@ContratoIdSource == Odimcontrato@ContratoIdSource,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimcontrato",
+						"lookupdimcontrato select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey,",
+						"          UsuarioKey,",
+						"          ContratoKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select6",
+						"select6, Odimfecha lookup(FechaEmisionKey == FechaKey,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimfecha",
+						"lookupdimfecha select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          FechaVencimientoKey,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey,",
+						"          UsuarioKey,",
+						"          ContratoKey,",
+						"          FechaEmisionKey = FechaKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select7",
+						"select7, Odimfecha lookup(FechaVencimientoKey == FechaKey,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupdimfechav",
+						"lookupdimfechav select(mapColumn(",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta,",
+						"          ClienteKey,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey,",
+						"          UsuarioKey,",
+						"          ContratoKey,",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey = FechaKey",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select8",
+						"select8 alterRow(upsertIf( true())) ~> alterRowfactfacturacion",
+						"alterRowfactfacturacion sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          FactFacturacionKey as long,",
+						"          FechaEmisionKey as integer,",
+						"          FechaVencimientoKey as integer,",
+						"          ClienteKey as long,",
+						"          ServicioKey as long,",
+						"          TipoContratoKey as long,",
+						"          EstadoFacturaKey as long,",
+						"          UsuarioKey as long,",
+						"          ContratoKey as long,",
+						"          FacturaIdSource as long,",
+						"          DetalleFacturaIdSource as long,",
+						"          CodigoFact as integer,",
+						"          Cantidad as integer,",
+						"          PrecioVenta as decimal(18,2),",
+						"          ImporteLinea as decimal(37,4),",
+						"          FechaCarga as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['DetalleFacturaIdSource'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          FechaEmisionKey,",
+						"          FechaVencimientoKey,",
+						"          ClienteKey,",
+						"          ServicioKey,",
+						"          TipoContratoKey,",
+						"          EstadoFacturaKey,",
+						"          UsuarioKey,",
+						"          ContratoKey,",
+						"          FacturaIdSource,",
+						"          DetalleFacturaIdSource,",
+						"          CodigoFact,",
+						"          Cantidad,",
+						"          PrecioVenta",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Origendatos')]",
+				"[concat(variables('factoryId'), '/datasets/Dimcliente')]",
+				"[concat(variables('factoryId'), '/datasets/Dimservicio')]",
+				"[concat(variables('factoryId'), '/datasets/Dimtipocontrato')]",
+				"[concat(variables('factoryId'), '/datasets/Dimestadofactura')]",
+				"[concat(variables('factoryId'), '/datasets/Dimusuario')]",
+				"[concat(variables('factoryId'), '/datasets/Dimcontrato')]",
+				"[concat(variables('factoryId'), '/datasets/odimfecha')]",
+				"[concat(variables('factoryId'), '/datasets/facttable')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		}
+	]
+}
