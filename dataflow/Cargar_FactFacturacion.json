@@ -198,7 +198,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: '\\nSELECT FechaKey\\nFROM dbo.DimFecha\\n',",
+				"     query: '\\nSELECT FechaKey\\nFROM dbo.DimFecha\\nWHERE FechaKey BETWEEN 20260101 AND 20271231\\n\\n',",
 				"     format: 'query') ~> Odimfecha",
 				"source1, Odimcliente lookup(source1@ClienteIdSource == Odimcliente@ClienteIdSource,",
 				"     multiple: false,",
