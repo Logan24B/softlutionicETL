@@ -114,7 +114,13 @@
 					"name": "select7"
 				},
 				{
-					"name": "lookup1"
+					"name": "lookupdimfechav"
+				},
+				{
+					"name": "select8"
+				},
+				{
+					"name": "alterRowfactfacturacion"
 				}
 			],
 			"scriptLines": [
@@ -198,7 +204,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: '\\nSELECT FechaKey\\nFROM dbo.DimFecha\\nWHERE FechaKey BETWEEN 20260101 AND 20271231\\n\\n',",
+				"     query: '\\nSELECT FechaKey\\nFROM dbo.DimFecha\\n',",
 				"     format: 'query') ~> Odimfecha",
 				"source1, Odimcliente lookup(source1@ClienteIdSource == Odimcliente@ClienteIdSource,",
 				"     multiple: false,",
@@ -350,8 +356,26 @@
 				"select7, Odimfecha lookup(FechaVencimientoKey == FechaKey,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1",
-				"lookup1 sink(allowSchemaDrift: true,",
+				"     broadcast: 'auto')~> lookupdimfechav",
+				"lookupdimfechav select(mapColumn(",
+				"          FacturaIdSource,",
+				"          DetalleFacturaIdSource,",
+				"          CodigoFact,",
+				"          Cantidad,",
+				"          PrecioVenta,",
+				"          ClienteKey,",
+				"          ServicioKey,",
+				"          TipoContratoKey,",
+				"          EstadoFacturaKey,",
+				"          UsuarioKey,",
+				"          ContratoKey,",
+				"          FechaEmisionKey,",
+				"          FechaVencimientoKey = FechaKey",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select8",
+				"select8 alterRow(upsertIf( true())) ~> alterRowfactfacturacion",
+				"alterRowfactfacturacion sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          FactFacturacionKey as long,",
@@ -372,9 +396,10 @@
 				"          FechaCarga as timestamp",
 				"     ),",
 				"     deletable:false,",
-				"     insertable:true,",
+				"     insertable:false,",
 				"     updateable:false,",
-				"     upsertable:false,",
+				"     upsertable:true,",
+				"     keys:['DetalleFacturaIdSource'],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
